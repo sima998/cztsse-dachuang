@@ -58,11 +58,11 @@
     .pdf-reader[hidden]{display:none}
     .pdf-toolbar{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:8px 10px;background:#fffdf0;border-bottom:1px solid #e8dea0;font-size:12px;color:#6b5a13}
     .pdf-toolbar button{border:1px solid #d8c86a;border-radius:6px;background:#fff;padding:4px 8px;color:#6b5a13;cursor:pointer}
-    .pdf-pages{max-height:620px;overflow:auto;padding:10px;background:#eef1f5}
+    .pdf-pages{max-height:620px;overflow:auto;overscroll-behavior:contain;padding:10px;background:#eef1f5}
     .pdf-page{display:block;width:100%;height:auto;margin:0 auto 12px;background:#fff;box-shadow:0 1px 5px rgba(0,0,0,.16)}
     .pdf-loading{padding:18px;text-align:center;color:#6c7480;font-size:13px}
     .pdf-error{padding:18px;color:#8b2f2f;background:#fff1f1;font-size:13px}
-    @media(min-width:951px){.side{position:sticky;top:18px;align-self:start}.pdf-pages{max-height:72vh}}
+    @media(min-width:951px){.side{position:sticky;top:18px;align-self:start;max-height:calc(100vh - 36px);overflow-y:auto;overscroll-behavior:contain;padding-right:4px}.pdf-pages{max-height:62vh;overscroll-behavior:contain}}
     @media(max-width:620px){.pdf-pages{max-height:none;padding:7px}.pdf-page{margin-bottom:8px}}
   </style>
 <style>
