@@ -312,8 +312,10 @@ document.querySelectorAll('[data-source]').forEach(el=>el.addEventListener('clic
 <script src="pdf.min.js"></script>
 <script>
 (function(){
+  document.querySelectorAll('.paper-card a[href$=".pdf"]').forEach(function(a){a.removeAttribute('target');a.removeAttribute('rel');a.textContent='在网页内阅读';});
   var oldFrame=document.getElementById('inlinePdf');
-  if(!oldFrame || typeof pdfjsLib==='undefined') return;
+  var pdfjsLib=window['pdfjs-dist/build/pdf'];
+  if(!oldFrame || !pdfjsLib) return;
   var holder=document.createElement('div');
   holder.className='pdf-reader'; holder.id='pdfReader'; holder.hidden=true;
   holder.innerHTML='<div class="pdf-toolbar"><span id="pdfStatus">网页内置阅读器</span><span><button id="pdfPrev" type="button">上一页</button> <button id="pdfNext" type="button">下一页</button> <span id="pdfPageNo">0 / 0</span></span></div><div class="pdf-pages" id="pdfPages"><div class="pdf-loading">正在加载论文原文……</div></div>';
