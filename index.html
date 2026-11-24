@@ -272,5 +272,30 @@ document.querySelectorAll('[data-source]').forEach(el=>el.addEventListener('clic
   });
 })();
 </script>
+<script>
+(function(){
+  // 移动端也在当前页面内显示 PDF，阻止本地全文链接触发浏览器跳转。
+  document.addEventListener('click',function(e){
+    var a=e.target.closest && e.target.closest('a');
+    if(!a) return;
+    var href=a.getAttribute('href')||'';
+    if(!/\.pdf(?:#.*)?$/i.test(href)) return;
+    e.preventDefault();
+    e.stopPropagation();
+    var card=a.closest('.paper-card');
+    if(card && typeof openPaper==='function'){
+      var cards=Array.prototype.slice.call(document.querySelectorAll('.paper-card'));
+      var idx=cards.indexOf(card);
+      if(idx>=0){ openPaper(['li25','par18','cnki'][idx]); return; }
+    }
+    var frame=document.getElementById('inlinePdf');
+    var label=document.getElementById('inlinePdfLabel');
+    var reader=document.getElementById('inlineReader');
+    if(frame){ frame.src=href; frame.hidden=false; }
+    if(label) label.hidden=false;
+    if(reader) reader.hidden=false;
+  },true);
+})();
+</script>
 </body>
 </html>
