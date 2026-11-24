@@ -97,7 +97,7 @@
 .simple-pdf-body{flex:1;min-height:0;overflow:auto;background:#eef1f5;border-radius:8px;padding:10px;text-align:center}
 .simple-pdf-body canvas{max-width:100%;height:auto;background:#fff;box-shadow:0 1px 6px rgba(0,0,0,.18)}
 </style>
- </head>
+ <style>#simplePdfModal{z-index:300}</style></head>
 <body>
 <div class="entry-screen" id="entryScreen"><div class="entry-panel"><div class="entry-kicker">CZTSSe · 大创项目</div><h1>大创三人组</h1><p>研究方向评估与论文证据整理</p><div class="entry-actions"><button class="entry-enter" id="enterSite">进入网站</button><button class="entry-exit" id="exitSite">退出</button></div></div></div>
 <main class="app">
@@ -150,7 +150,7 @@
 <div class="modal" id="simplePdfModal" hidden>
   <div class="modal-card simple-pdf-card" role="dialog" aria-modal="true">
     <div class="modal-head"><div><h2 id="simplePdfTitle">论文原文</h2><div class="source-meta" id="simplePdfMeta"></div></div><button class="modal-close" id="simplePdfClose" type="button" aria-label="关闭">×</button></div>
-    <div class="simple-pdf-bar"><button id="simplePdfPrev" type="button">上一页</button><span id="simplePdfPage">1 / 1</span><button id="simplePdfNext" type="button">下一页</button></div>
+    <div class="simple-pdf-bar"><button id="simplePdfPrev" type="button">上一页</button><span id="simplePdfPage">1 / 1</span><a id="simplePdfOpen" target="_blank" rel="noreferrer" style="margin-left:auto;font-size:12px;color:#175cad">新标签打开</a><button id="simplePdfNext" type="button">下一页</button></div>
     <div class="simple-pdf-body"><canvas id="simplePdfCanvas"></canvas></div>
   </div>
 </div>
@@ -482,7 +482,7 @@ document.querySelectorAll('[data-source]').forEach(el=>el.addEventListener('clic
     }).then(function(){rendering=false;}).catch(function(e){rendering=false;pageEl.textContent='渲染失败：'+(e&&e.message||e);});
   }
   function open(pathArg,title){
-    path=pathArg;titleEl.textContent=title||'论文原文';metaEl.textContent=path;
+    path=pathArg;titleEl.textContent=title||'论文原文';metaEl.textContent=path;var _l=document.getElementById('simplePdfOpen');if(_l)_l.href=path;
     pageEl.textContent='正在加载…';show();
     if(doc){doc.destroy();doc=null;}
     pdfjsLib.getDocument({url:path}).promise.then(function(d){
