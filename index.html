@@ -327,7 +327,7 @@ document.querySelectorAll('[data-source]').forEach(el=>el.addEventListener('clic
   },true);
 })();
 </script>
-<script src="pdf.min.js"></script>
+<script>window.Worker=undefined;</script><script src="pdf.min.js"></script>
 <script>
 (function(){
   document.querySelectorAll('.paper-card a[href$=".pdf"]').forEach(function(a){a.removeAttribute('target');a.removeAttribute('rel');a.textContent='在网页内阅读';});
@@ -359,7 +359,7 @@ document.querySelectorAll('[data-source]').forEach(el=>el.addEventListener('clic
     renderOne(pages.querySelector('.pdf-page'));
   }
   function renderLocalPdf(path){
-    if(!path) return; holder.hidden=false; currentPage=1; currentPath=path; renderToken++; var token=renderToken; pages.innerHTML='<div class="pdf-loading">正在加载论文原文……</div>'; status.textContent='正在加载原文';
+    if(!path) return; holder.hidden=false; currentPage=1; currentPath=path; renderToken++; var token=renderToken; pages.innerHTML='<div class="pdf-loading">正在加载论文原文……</div>'; status.textContent='正在加载原文（首次约 5–10 秒）';
     pdfjsLib.getDocument({url:path}).promise.then(function(doc){if(token!==renderToken)return;currentDoc=doc;buildPages(doc);}).catch(function(err){if(token!==renderToken)return;status.textContent='原文加载失败';pages.innerHTML='<div class="pdf-error">论文原文暂时无法在当前页面绘制，请稍后刷新重试。</div>';});
   }
   window.renderLocalPdf=renderLocalPdf;
