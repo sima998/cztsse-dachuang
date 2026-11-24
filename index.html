@@ -52,6 +52,18 @@
   
     .entry-screen{position:fixed;inset:0;z-index:50;display:grid;place-items:center;background:linear-gradient(135deg,#10233f 0%,#173f5f 58%,#1e6f73 100%);color:#fff;padding:24px}.entry-screen[hidden]{display:none}.entry-panel{width:min(560px,92vw);padding:42px 38px 36px;text-align:center;border:1px solid rgba(255,255,255,.22);border-radius:22px;background:rgba(7,20,39,.42);box-shadow:0 24px 80px rgba(0,0,0,.28)}.entry-kicker{font-size:13px;letter-spacing:.18em;color:#9bd9d0;margin-bottom:15px}.entry-panel h1{margin:0;font-size:42px;letter-spacing:.04em}.entry-panel p{margin:15px 0 28px;color:#dceaf0;line-height:1.7}.entry-actions{display:flex;justify-content:center;gap:12px}.entry-actions button{min-width:126px;padding:12px 24px;border:0;border-radius:10px;font-size:15px;font-weight:700;cursor:pointer}.entry-enter{background:#f2c94c;color:#1b2940}.entry-exit{background:transparent;color:#fff;border:1px solid rgba(255,255,255,.5)!important}.exit-screen{min-height:100vh;display:grid;place-items:center;background:#10233f;color:#fff;text-align:center;padding:30px}.exit-screen h1{font-size:32px}.exit-screen p{color:#cbd9e0}.source-actions{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0}.source-actions a{display:inline-block;padding:7px 10px;border-radius:8px;background:#173f5f;color:#fff;text-decoration:none;font-size:12px}.source-actions a.secondary{background:#edf2fb;color:#175cad}
 
+    /* 网页内置 PDF 阅读器：不用 iframe，不调用系统 PDF 打开器。 */
+    .inline-reader iframe{display:none!important}
+    .pdf-reader{display:none;margin-top:10px;border:1px solid #d9cf82;border-radius:9px;background:#f6f7fb;overflow:hidden}
+    .pdf-reader[hidden]{display:none}
+    .pdf-toolbar{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:8px 10px;background:#fffdf0;border-bottom:1px solid #e8dea0;font-size:12px;color:#6b5a13}
+    .pdf-toolbar button{border:1px solid #d8c86a;border-radius:6px;background:#fff;padding:4px 8px;color:#6b5a13;cursor:pointer}
+    .pdf-pages{max-height:620px;overflow:auto;padding:10px;background:#eef1f5}
+    .pdf-page{display:block;width:100%;height:auto;margin:0 auto 12px;background:#fff;box-shadow:0 1px 5px rgba(0,0,0,.16)}
+    .pdf-loading{padding:18px;text-align:center;color:#6c7480;font-size:13px}
+    .pdf-error{padding:18px;color:#8b2f2f;background:#fff1f1;font-size:13px}
+    @media(min-width:951px){.side{position:sticky;top:18px;align-self:start}.pdf-pages{max-height:72vh}}
+    @media(max-width:620px){.pdf-pages{max-height:none;padding:7px}.pdf-page{margin-bottom:8px}}
   </style>
 </head>
 <body>
@@ -295,6 +307,47 @@ document.querySelectorAll('[data-source]').forEach(el=>el.addEventListener('clic
     if(label) label.hidden=false;
     if(reader) reader.hidden=false;
   },true);
+})();
+</script>
+<script src="vendor/pdf.min.js"></script>
+<script>
+(function(){
+  var oldFrame=document.getElementById('inlinePdf');
+  if(!oldFrame || typeof pdfjsLib==='undefined') return;
+  var holder=document.createElement('div');
+  holder.className='pdf-reader'; holder.id='pdfReader'; holder.hidden=true;
+  holder.innerHTML='<div class="pdf-toolbar"><span id="pdfStatus">网页内置阅读器</span><span><button id="pdfPrev" type="button">上一页</button> <button id="pdfNext" type="button">下一页</button> <span id="pdfPageNo">0 / 0</span></span></div><div class="pdf-pages" id="pdfPages"><div class="pdf-loading">正在加载论文原文……</div></div>';
+  oldFrame.insertAdjacentElement('afterend',holder);
+  pdfjsLib.GlobalWorkerOptions.workerSrc='vendor/pdf.worker.min.js';
+  var pages=document.getElementById('pdfPages'), status=document.getElementById('pdfStatus'), pageNo=document.getElementById('pdfPageNo');
+  var currentDoc=null, currentPath='', currentPage=1, renderToken=0, observer=null;
+  function renderOne(canvas){
+    if(!currentDoc || canvas.dataset.rendered==='1') return;
+    var n=Number(canvas.dataset.page); canvas.dataset.rendered='loading';
+    currentDoc.getPage(n).then(function(page){
+      var base=page.getViewport({scale:1}); var width=Math.max(260,pages.clientWidth-20); var scale=width/base.width; var viewport=page.getViewport({scale:scale}); var dpr=Math.min(window.devicePixelRatio||1,2);
+      canvas.width=Math.ceil(viewport.width*dpr); canvas.height=Math.ceil(viewport.height*dpr); canvas.style.width=Math.ceil(viewport.width)+'px'; canvas.style.height=Math.ceil(viewport.height)+'px';
+      return page.render({canvasContext:canvas.getContext('2d'),viewport:viewport,transform:dpr!==1?[dpr,0,0,dpr,0,0]:null}).promise;
+    }).then(function(){canvas.dataset.rendered='1';}).catch(function(){canvas.dataset.rendered='error';});
+  }
+  function buildPages(doc){
+    pages.innerHTML=''; pageNo.textContent='1 / '+doc.numPages; status.textContent='网页内置阅读器 · 点击页面或上下滚动阅读';
+    for(var i=1;i<=doc.numPages;i++){var c=document.createElement('canvas'); c.className='pdf-page'; c.dataset.page=String(i); c.setAttribute('aria-label','论文第 '+i+' 页'); pages.appendChild(c);}
+    if(observer) observer.disconnect();
+    observer=new IntersectionObserver(function(entries){entries.forEach(function(e){if(e.isIntersecting){renderOne(e.target); var n=Number(e.target.dataset.page); if(n) {currentPage=n;pageNo.textContent=n+' / '+doc.numPages;}}});},{root:pages,rootMargin:'900px 0px'});
+    Array.prototype.forEach.call(pages.querySelectorAll('.pdf-page'),function(c){observer.observe(c);});
+    renderOne(pages.querySelector('.pdf-page'));
+  }
+  function renderLocalPdf(path){
+    if(!path) return; holder.hidden=false; currentPage=1; currentPath=path; renderToken++; var token=renderToken; pages.innerHTML='<div class="pdf-loading">正在加载论文原文……</div>'; status.textContent='正在加载原文';
+    pdfjsLib.getDocument({url:path}).promise.then(function(doc){if(token!==renderToken)return;currentDoc=doc;buildPages(doc);}).catch(function(err){if(token!==renderToken)return;status.textContent='原文加载失败';pages.innerHTML='<div class="pdf-error">论文原文暂时无法在当前页面绘制，请稍后刷新重试。</div>';});
+  }
+  window.renderLocalPdf=renderLocalPdf;
+  document.getElementById('pdfPrev').addEventListener('click',function(){var n=Math.max(1,currentPage-1),c=pages.querySelector('[data-page="'+n+'"]');if(c){c.scrollIntoView({behavior:'smooth',block:'start'});renderOne(c);}});
+  document.getElementById('pdfNext').addEventListener('click',function(){var n=Math.min(currentDoc?currentDoc.numPages:currentPage+1,currentPage+1),c=pages.querySelector('[data-page="'+n+'"]');if(c){c.scrollIntoView({behavior:'smooth',block:'start'});renderOne(c);}});
+  var originalOpen=window.openPaper;
+  window.openPaper=function(key){if(typeof originalOpen==='function')originalOpen(key);var p=typeof paperData!=='undefined'?paperData[key]:null;if(p&&p.local)renderLocalPdf(p.local);else holder.hidden=true;};
+  document.addEventListener('click',function(e){var a=e.target.closest&&e.target.closest('a');if(!a)return;var href=a.getAttribute('href')||'';if(!/\.pdf(?:#.*)?$/i.test(href))return;e.preventDefault();e.stopImmediatePropagation();var card=a.closest('.paper-card');if(card){var cards=Array.prototype.slice.call(document.querySelectorAll('.paper-card'));var idx=cards.indexOf(card);if(idx>=0){window.openPaper(['li25','par18','cnki'][idx]);return;}}renderLocalPdf(href);},true);
 })();
 </script>
 </body>
