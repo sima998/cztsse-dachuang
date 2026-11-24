@@ -75,6 +75,12 @@
       .side .card{box-shadow:none}
       .pdf-pages{max-height:none}
     }
+</style><style id="scrollFix">
+@media(min-width:951px){
+  .side{height:calc(100vh - 36px)!important;max-height:calc(100vh - 36px)!important;overflow:hidden!important;display:flex!important;flex-direction:column!important}
+  .side>.card{flex:1 1 auto;min-height:0;overflow-y:auto;overscroll-behavior:contain}
+  .pdf-pages{overscroll-behavior:contain}
+}
 </style></head>
 <body>
 <div class="entry-screen" id="entryScreen"><div class="entry-panel"><div class="entry-kicker">CZTSSe · 大创项目</div><h1>大创三人组</h1><p>研究方向评估与论文证据整理</p><div class="entry-actions"><button class="entry-enter" id="enterSite">进入网站</button><button class="entry-exit" id="exitSite">退出</button></div></div></div>
@@ -400,6 +406,20 @@ document.querySelectorAll('[data-source]').forEach(el=>el.addEventListener('clic
       openDrawer();
     }
   });
+})();
+</script>
+<script>
+(function(){
+  var side=document.querySelector('.side');
+  if(!side) return;
+  side.addEventListener('wheel',function(e){
+    var sc=e.target.closest('.pdf-pages')||e.target.closest('.inline-excerpt')||side.querySelector('.card')||side;
+    var max=sc.scrollHeight-sc.clientHeight;
+    var dy=e.deltaY;
+    var atTop=sc.scrollTop<=0&&dy<0;
+    var atBottom=sc.scrollTop>=max-1&&dy>0;
+    if(max<=0||atTop||atBottom){e.preventDefault();}
+  },{passive:false});
 })();
 </script>
 </body>
