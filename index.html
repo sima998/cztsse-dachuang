@@ -309,7 +309,7 @@ document.querySelectorAll('[data-source]').forEach(el=>el.addEventListener('clic
   },true);
 })();
 </script>
-<script src="vendor/pdf.min.js"></script>
+<script src="pdf.min.js"></script>
 <script>
 (function(){
   var oldFrame=document.getElementById('inlinePdf');
@@ -318,7 +318,7 @@ document.querySelectorAll('[data-source]').forEach(el=>el.addEventListener('clic
   holder.className='pdf-reader'; holder.id='pdfReader'; holder.hidden=true;
   holder.innerHTML='<div class="pdf-toolbar"><span id="pdfStatus">网页内置阅读器</span><span><button id="pdfPrev" type="button">上一页</button> <button id="pdfNext" type="button">下一页</button> <span id="pdfPageNo">0 / 0</span></span></div><div class="pdf-pages" id="pdfPages"><div class="pdf-loading">正在加载论文原文……</div></div>';
   oldFrame.insertAdjacentElement('afterend',holder);
-  pdfjsLib.GlobalWorkerOptions.workerSrc='vendor/pdf.worker.min.js';
+  pdfjsLib.GlobalWorkerOptions.workerSrc='pdf.worker.min.js';
   var pages=document.getElementById('pdfPages'), status=document.getElementById('pdfStatus'), pageNo=document.getElementById('pdfPageNo');
   var currentDoc=null, currentPath='', currentPage=1, renderToken=0, observer=null;
   function renderOne(canvas){
