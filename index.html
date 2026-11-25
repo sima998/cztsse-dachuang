@@ -167,6 +167,13 @@
     <div class="flow-body" id="flowBody"></div>
   </div>
 </div>
+
+<div class="modal" id="paperImgModal" hidden>
+  <div class="modal-card" style="width:min(1000px,94vw)">
+    <div class="modal-head"><div><h2 id="pimTitle">论文证据</h2><div class="source-meta" id="pimMeta"></div></div><button class="modal-close" id="pimClose" type="button" aria-label="关闭">×</button></div>
+    <div class="modal-grid"><img id="pimImg" alt="论文页面"><div><div class="provenance" id="pimBadge"></div><div id="pimText"></div><a id="pimOpen" target="_blank" rel="noreferrer">新标签打开原文 ↗</a></div></div>
+  </div>
+</div>
 </main>
 <script>
 const sources={"cds":{"title":"CdS/CZTSSe界面与Cd(S,Se)思路","meta":"前界面 · 能带匹配 · 缓冲层","body":"简单说：方向一是在修电池中间的“接缝”。如果 CdS 和 CZTSSe 接得不好，电子会在接缝处复合。","summary":"论文的共同结论是，界面带阶和互扩散会影响复合与 Voc。","conclusion":"先改薄膜，再用界面表征确认 Voc 的变化来自哪里。","innovation":"把“做 Cd(S,Se)”改成“寻找 Se 比例和厚度的可用窗口”。","experiment":"低、中、高 Se 比例 + 统一 CBD 条件，先测膜厚、成分、带隙，再做器件。","excerpt":"原文要点：界面互扩散会改变带边和界面偶极；两步沉积的价值是先覆盖、后补齐界面。","links":[["Haight 2011：能带匹配","https://doi.org/10.1063/1.3600776"],["Bär 2017：Cd(S,Se)混合界面层","https://doi.org/10.1021/ACSENERGYLETT.7B00140"],["Chen 2019：界面互扩散与器件提升","https://doi.org/10.1016/J.MTENER.2019.05.015"],["Nisika 2020：界面工程综述","https://doi.org/10.1039/D0TA06450E"],["Wei 2018：两步CdS沉积","https://doi.org/10.1016/J.SOLMAT.2018.02.002"]],"pdfs":[["Park 2018 · 界面与 Voc","papers/Par18.pdf"],["张朋朋 2018 · CdS 厚度","papers/zhang2018.pdf"],["段碧雯 2021 · 界面调控","papers/duan2021.pdf"]]},"na":{"title":"Na来源与CZTSSe薄膜性能","meta":"吸收层 · 晶粒 · 缺陷 · Voc / FF","body":"简单说：方向二是在给 Na “装轨道”。玻璃里的 Na 会自己跑进薄膜，所以要先挡住一部分，再自己控制添加量。","summary":"论文说明 Na 的作用不只看总量，还要看它从哪里来、停在哪里、什么时候进入薄膜。","conclusion":"存在一个合适的 Na 窗口，过少无效，过多也可能带来副作用。","innovation":"把“Na 掺杂”升级成“Na 来源和空间位置控制”，并加上热处理锁定变量。","experiment":"基线、阻挡层、低 Na、中 Na 四组；先做薄膜表征，再做少量器件。","excerpt":"原文要点：前表面受控、底部增强的梯度分布更值得关注；2025 年工作进一步用热处理和快速冷却锁定 Na。","links":[["Abzieher 2016：Na来源","https://doi.org/10.1002/pssa.201532619"],["Xie 2016：Na深度分布","https://doi.org/10.1021/acsami.5b12243"],["Yang 2021：NaF位置","https://doi.org/10.1002/adfm.202102238"],["Yang 2024：Na梯度分布","https://doi.org/10.1002/smll.202307807"],["Li 2025：Na扩散动力学与锁定","https://doi.org/10.1002/advs.202504087"],["Yang 2026：储存过程中的Na迁移","https://doi.org/10.1063/5.0340866"]],"pdfs":[["Li 2025 · Na 锁定","papers/Li25.pdf"],["杨艳春 2017 · Na 来源与分布","papers/yang2017.pdf"],["赵运海 2023 · 综述","papers/review2023.pdf"]]},"barrier":{"title":"Na扩散阻挡层","meta":"玻璃 / 阻挡层 / Mo / CZTSSe","body":"阻挡层的意义不是把Na彻底“消灭”，而是降低衬底随机供Na的贡献，让主动添加量成为主要可控变量。它同时带来一个必须验证的边界：Mo附着、MoSe₂形成和背接触电阻不能被破坏。","excerpt":"相关段落要点：阻挡层厚度和位置会改变Na扩散与背接触行为，因此第一轮应先做阻挡层空白对照，再进入Na梯度。","links":[["Englund 2017：TiN厚度与Na扩散风险","https://doi.org/10.1016/J.TSF.2017.08.030"],["Kim 2020：Na辅助晶界/缺陷钝化","https://doi.org/10.1039/c9cp06537g"],["SiOx阻挡层与主动Na添加","https://pubs.rsc.org/en/content/articlehtml/2026/ta/d5ta06324h?page=search"]],"pdfs":[["杨艳春 2017 · Na 扩散","papers/yang2017.pdf"],["Li 2025 · Na 位置","papers/Li25.pdf"]]},"interface":{"title":"前界面互扩散与能带","meta":"CdS/CZTSSe · 带阶 · 界面复合","body":"界面工程不能只看带隙数值，还要把带阶、界面偶极、互扩散和缺陷态一起考虑。网站把“解释点”放到论文依据旁边，方便从现象回到机制。","excerpt":"相关段落要点：理论与实验工作都把CZTSSe/CdS界面复合和导带位置联系到Voc损失，验证时需要结合器件参数与界面表征。","links":[["Park 2018：界面带隙变窄与Voc损失","https://doi.org/10.1063/1.5063793"],["Chen 2019：界面工程","https://doi.org/10.1016/J.MTENER.2019.05.015"],["Nisika 2020：界面工程综述","https://doi.org/10.1039/D0TA06450E"]],"pdfs":[["Park 2018 · 界面与 Voc","papers/Par18.pdf"],["段碧雯 2021 · 界面调控","papers/duan2021.pdf"]]},"defect":{"title":"缺陷与可解释性","meta":"晶界 · 次生相 · 缺陷态 · 器件参数","body":"项目的创新点不应写成“再做一次Na掺杂”，而应写成“建立来源控制—空间分布—缺陷/晶粒—Voc/FF的证据链”。如果只能做部分表征，就把结论边界写清楚。","excerpt":"相关段落要点：综述和局部成分研究提醒我们，整体成分可能掩盖纳米尺度的次生相和非均匀缺陷，因此要优先做能支撑因果判断的表征。","links":[["Wang 2024：缺陷的起源、影响与工程","https://doi.org/10.1039/d4ta03883e"],["Ritzer 2020：纳米尺度限制因素","https://doi.org/10.1002/pssa.202000257"],["Kim 2020：Na对晶界和缺陷的影响","https://doi.org/10.1039/c9cp06537g"]],"pdfs":[["张朋朋 2018 · 吸收层","papers/zhang2018.pdf"],["于晴 2020 · Na 与缺陷","papers/yu2020.pdf"]]}};
@@ -570,6 +577,56 @@ document.querySelectorAll('[data-source]').forEach(el=>el.addEventListener('clic
     var i=cards.indexOf(card);var k=keys[i]||keys[0];
     var p=(typeof paperData!=='undefined')?paperData[k]:null;
     if(p&&p.local&&window.openSimplePdf){window.openSimplePdf(p.local,p.title||k);}
+  },true);
+})();
+</script>
+
+<script>
+(function(){
+  var m=document.getElementById('paperImgModal');
+  var img=document.getElementById('pimImg');
+  var titleEl=document.getElementById('pimTitle');
+  var metaEl=document.getElementById('pimMeta');
+  var textEl=document.getElementById('pimText');
+  var badgeEl=document.getElementById('pimBadge');
+  var openEl=document.getElementById('pimOpen');
+  var keys=['li25','par18','cnki'];
+  function firstOf(path){
+    var mm=String(path||'').match(/papers\/([^\/]+)\.pdf/);
+    return mm?('papers/img/'+mm[1]+'/001.jpg'):'';
+  }
+  function show(){m.hidden=false;document.body.style.overflow='hidden';}
+  function close(){m.hidden=true;document.body.style.overflow='';}
+  function openCard(k){
+    var p=(typeof paperData!=='undefined')?paperData[k]:null;
+    if(!p) return;
+    titleEl.textContent=p.title||'论文证据';
+    metaEl.textContent=p.meta||'';
+    img.src=p.image||firstOf(p.local);
+    badgeEl.innerHTML='<span class="'+(p.local?'local-badge':'remote-badge')+'">'+(p.local?'本地 PDF 已收录':'在线原文')+'</span><b>来源：</b>'+(p.journal||'')+'　<b>作者：</b>'+(p.authors||'');
+    textEl.innerHTML='<p><b>论文结论：</b>'+(p.conclusion||'')+'</p><p><b>与本项目关系：</b>'+(p.relation||'')+'</p><p><b>可做的实验：</b>'+(p.experiment||'')+'</p><p><b>关键段落：</b>'+(p.passage||'')+'</p>';
+    openEl.href=p.local||p.link||'#';
+    show();
+  }
+  function openPath(path,title){
+    if(!path) return;
+    titleEl.textContent=title||'论文证据';
+    metaEl.textContent=path;
+    img.src=firstOf(path);
+    badgeEl.innerHTML='<b>论文第一页</b>　完整页面可点右下角“新标签打开原文”';
+    textEl.innerHTML='<p>这是该论文的首页截图。完整原文请点右下角链接。</p>';
+    openEl.href=path;
+    show();
+  }
+  window.openPaperImage=openCard;
+  document.getElementById('pimClose').addEventListener('click',close);
+  m.addEventListener('click',function(e){if(e.target===m)close();});
+  document.addEventListener('keydown',function(e){if(e.key==='Escape'&&!m.hidden)close();});
+  window.addEventListener('click',function(e){
+    var b=e.target.closest&&e.target.closest('[data-pdf-open],[data-simple]');
+    if(b){e.preventDefault();e.stopImmediatePropagation();openPath(b.getAttribute('data-pdf-open')||b.getAttribute('data-simple'),b.textContent.trim());return;}
+    var card=e.target.closest&&e.target.closest('.paper-card');
+    if(card){e.preventDefault();e.stopImmediatePropagation();var cards=Array.prototype.slice.call(document.querySelectorAll('.paper-card'));var i=cards.indexOf(card);openCard(keys[i]||'li25');}
   },true);
 })();
 </script>
