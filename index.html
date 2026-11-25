@@ -484,6 +484,16 @@ document.querySelectorAll('[data-source]').forEach(el=>el.addEventListener('clic
     'papers/yu2020.pdf':'papers/img/yu2020.zip',
     'papers/zhang2018.pdf':'papers/img/zhang2018.zip'
   };
+  var first={
+    'papers/Li25.pdf':'papers/img/Li25/001.jpg',
+    'papers/Par18.pdf':'papers/img/Par18/001.jpg',
+    'papers/review2023.pdf':'papers/img/review2023/001.jpg',
+    'papers/yang2017.pdf':'papers/img/yang2017/001.jpg',
+    'papers/duan2021.pdf':'papers/img/duan2021/001.jpg',
+    'papers/yu2020.pdf':'papers/img/yu2020/001.jpg',
+    'papers/zhang2018.pdf':'papers/img/zhang2018/001.jpg'
+  };
+  img.addEventListener('error',function(){pageEl.textContent='图片加载失败';});
   var cache={},pages=[],page=1,current='';
   function show(){modal.hidden=false;document.body.style.overflow='hidden';}
   function hide(){modal.hidden=true;document.body.style.overflow='';}
@@ -491,7 +501,7 @@ document.querySelectorAll('[data-source]').forEach(el=>el.addEventListener('clic
   function open(path,title){
     path=path||'';current=path;titleEl.textContent=title||'论文原文';metaEl.textContent=path;
     var link=document.getElementById('simplePdfOpen');if(link)link.href=path;
-    show();pageEl.textContent='正在加载…';img.removeAttribute('src');
+    show();pageEl.textContent='第 1 页（正在加载全部页面…）';var fp=first[path];if(fp){img.src=fp;}else{img.removeAttribute('src');}
     if(cache[path]){pages=cache[path];page=1;render();return;}
     var z=zips[path];
     if(!z){pageEl.textContent='没有图片版';return;}
@@ -501,7 +511,7 @@ document.querySelectorAll('[data-source]').forEach(el=>el.addEventListener('clic
     }).then(function(blobs){
       pages=blobs.map(function(b){return URL.createObjectURL(b);});
       cache[path]=pages;page=1;render();
-    }).catch(function(e){pageEl.textContent='加载失败：'+(e&&e.message||e);});
+    }).catch(function(e){pageEl.textContent='已显示第 1 页（全部页面加载失败：'+(e&&e.message||e)+'）';});
   }
   window.openSimplePdf=open;
   document.getElementById('simplePdfClose').addEventListener('click',hide);
