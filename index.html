@@ -97,7 +97,13 @@
 .simple-pdf-body{flex:1;min-height:0;overflow:auto;background:#eef1f5;border-radius:8px;padding:10px;text-align:center}
 .simple-pdf-body canvas{max-width:100%;height:auto;background:#fff;box-shadow:0 1px 6px rgba(0,0,0,.18)}
 </style>
- <style>#simplePdfModal{z-index:300}</style></head>
+ <style>#simplePdfModal{z-index:300}</style>
+<style id="flowModalStyle">
+#flowModal{z-index:250}
+.flow-card{width:min(780px,94vw);max-height:88vh;display:flex;flex-direction:column}
+.flow-body{overflow:auto;padding:4px 2px 10px}
+</style>
+</head>
 <body>
 <div class="entry-screen" id="entryScreen"><div class="entry-panel"><div class="entry-kicker">CZTSSe · 大创项目</div><h1>大创三人组</h1><p>研究方向评估与论文证据整理</p><div class="entry-actions"><button class="entry-enter" id="enterSite">进入网站</button><button class="entry-exit" id="exitSite">退出</button></div></div></div>
 <main class="app">
@@ -152,6 +158,13 @@
     <div class="modal-head"><div><h2 id="simplePdfTitle">论文原文</h2><div class="source-meta" id="simplePdfMeta"></div></div><button class="modal-close" id="simplePdfClose" type="button" aria-label="关闭">×</button></div>
     <div class="simple-pdf-bar"><button id="simplePdfPrev" type="button">上一页</button><span id="simplePdfPage">1 / 1</span><a id="simplePdfOpen" target="_blank" rel="noreferrer" style="margin-left:auto;font-size:12px;color:#175cad">新标签打开</a><button id="simplePdfNext" type="button">下一页</button></div>
     <div class="simple-pdf-body"><canvas id="simplePdfCanvas"></canvas></div>
+  </div>
+</div>
+
+<div class="modal" id="flowModal" hidden>
+  <div class="modal-card flow-card" role="dialog" aria-modal="true">
+    <div class="modal-head"><div><h2 id="flowTitle">论文依据</h2><div class="source-meta" id="flowMeta"></div></div><button class="modal-close" id="flowClose" type="button" aria-label="关闭">×</button></div>
+    <div class="flow-body" id="flowBody"></div>
   </div>
 </div>
 </main>
@@ -407,7 +420,7 @@ document.querySelectorAll('[data-source]').forEach(el=>el.addEventListener('clic
   // capture on window runs before the PDF.js document handler
   window.addEventListener('click',function(e){
     var t=e.target;
-    if(t.closest('[data-source]')||t.closest('.paper-item')||t.closest('.paper-card')||t.closest('a[href$=".pdf"]')){
+    if(t.closest('.paper-item')||t.closest('.paper-card')||t.closest('a[href$=".pdf"]')){
       setTimeout(openDrawer,0);
     }
   },true);
@@ -500,6 +513,38 @@ document.querySelectorAll('[data-source]').forEach(el=>el.addEventListener('clic
     if(!b) return;
     e.preventDefault();e.stopImmediatePropagation();
     open(b.getAttribute('data-pdf-open')||b.getAttribute('data-simple'), b.textContent.trim());
+  },true);
+})();
+</script>
+
+<script>
+(function(){
+  var m=document.getElementById('flowModal');
+  var t=document.getElementById('flowTitle');
+  var meta=document.getElementById('flowMeta');
+  var body=document.getElementById('flowBody');
+  function close(){m.hidden=true;document.body.style.overflow='';}
+  function open(key){
+    if(!key) return;
+    if(typeof showSource==='function'){try{showSource(key);}catch(e){}}
+    var src=(typeof sources!=='undefined')?sources[key]:null;
+    if(!src) return;
+    t.textContent=src.title; meta.textContent=src.meta;
+    var html='<p>'+src.body+'</p>';
+    if(src.summary){html+='<div class="plain-box"><b>这些论文说了什么</b><p>'+src.summary+'</p><p><strong>一句话结论：</strong>'+src.conclusion+'</p><p><strong>可以怎么创新：</strong>'+src.innovation+'</p><p><strong>实验先做什么：</strong>'+src.experiment+'</p></div>';}
+    if(src.excerpt){html+='<div class="excerpt"><b>相关段落定位</b>'+src.excerpt+'</div>';}
+    if(src.pdfs&&src.pdfs.length){html+='<div class="pdf-links"><b>相关论文全文 · 页面内阅读</b><div class="pdf-btns">'+src.pdfs.map(function(p){return '<button type="button" class="pdf-open" data-pdf-open="'+p[1]+'">'+p[0]+'</button>';}).join('')+'</div></div>';}
+    body.innerHTML=html; m.hidden=false; document.body.style.overflow='hidden';
+  }
+  window.openFlowModal=open;
+  document.getElementById('flowClose').addEventListener('click',close);
+  m.addEventListener('click',function(e){if(e.target===m)close();});
+  document.addEventListener('keydown',function(e){if(e.key==='Escape'&&!m.hidden)close();});
+  document.addEventListener('click',function(e){
+    var n=e.target.closest&&e.target.closest('[data-source]');
+    if(!n) return;
+    e.preventDefault();e.stopImmediatePropagation();
+    open(n.getAttribute('data-source'));
   },true);
 })();
 </script>
