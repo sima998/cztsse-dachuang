@@ -95,7 +95,7 @@
 .simple-pdf-bar{display:flex;align-items:center;gap:10px;padding:8px 2px;font-size:13px;color:#5f6b7a}
 .simple-pdf-bar button{border:1px solid #c9d3e3;background:#fff;border-radius:7px;padding:6px 12px;font-weight:700;cursor:pointer}
 .simple-pdf-body{flex:1;min-height:0;overflow:auto;background:#eef1f5;border-radius:8px;padding:10px;text-align:center}
-.simple-pdf-body canvas{max-width:100%;height:auto;background:#fff;box-shadow:0 1px 6px rgba(0,0,0,.18)}
+.simple-pdf-body canvas{max-width:100%;height:auto;background:#fff;box-shadow:0 1px 6px rgba(0,0,0,.18)}.simple-pdf-frame{width:100%;height:72vh;border:0;background:#fff;border-radius:8px}
 </style>
  <style>#simplePdfModal{z-index:300}</style>
 <style id="flowModalStyle">
@@ -157,7 +157,7 @@
   <div class="modal-card simple-pdf-card" role="dialog" aria-modal="true">
     <div class="modal-head"><div><h2 id="simplePdfTitle">论文原文</h2><div class="source-meta" id="simplePdfMeta"></div></div><button class="modal-close" id="simplePdfClose" type="button" aria-label="关闭">×</button></div>
     <div class="simple-pdf-bar"><button id="simplePdfPrev" type="button">上一页</button><span id="simplePdfPage">1 / 1</span><a id="simplePdfOpen" target="_blank" rel="noreferrer" style="margin-left:auto;font-size:12px;color:#175cad">新标签打开</a><button id="simplePdfNext" type="button">下一页</button></div>
-    <div class="simple-pdf-body"><canvas id="simplePdfCanvas"></canvas></div>
+    <div class="simple-pdf-body"><iframe id="simplePdfFrame" class="simple-pdf-frame" title="论文原文" hidden></iframe><canvas id="simplePdfCanvas" hidden></canvas></div>
   </div>
 </div>
 
@@ -496,11 +496,9 @@ document.querySelectorAll('[data-source]').forEach(el=>el.addEventListener('clic
   }
   function open(pathArg,title){
     path=pathArg;titleEl.textContent=title||'论文原文';metaEl.textContent=path;var _l=document.getElementById('simplePdfOpen');if(_l)_l.href=path;
-    pageEl.textContent='正在加载…';show();
-    if(doc){doc.destroy();doc=null;}
-    pdfjsLib.getDocument({url:path}).promise.then(function(d){
-      doc=d;total=d.numPages;page=1;render();
-    }).catch(function(e){pageEl.textContent='加载失败：'+(e&&e.message||e);});
+    show();
+    var f=document.getElementById('simplePdfFrame');if(f){f.src=path;f.hidden=false;}
+    canvas.hidden=true;var bar=document.querySelector('.simple-pdf-bar');if(bar)bar.style.display='none';
   }
   window.openSimplePdf=open;
   document.getElementById('simplePdfClose').addEventListener('click',hide);
