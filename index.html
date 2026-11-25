@@ -404,7 +404,7 @@ document.querySelectorAll('[data-source]').forEach(el=>el.addEventListener('clic
   var side=document.querySelector('.side');
   if(!side) return;
   function isMobile(){return window.innerWidth<=950;}
-  function openDrawer(){
+  function openDrawer(){return;
     if(!isMobile()) return;
     side.classList.add('open');
     document.body.style.overflow='hidden';
@@ -545,6 +545,20 @@ document.querySelectorAll('[data-source]').forEach(el=>el.addEventListener('clic
     if(!n) return;
     e.preventDefault();e.stopImmediatePropagation();
     open(n.getAttribute('data-source'));
+  },true);
+})();
+</script>
+<script>
+(function(){
+  var keys=['li25','par18','cnki'];
+  document.addEventListener('click',function(e){
+    var card=e.target.closest&&e.target.closest('.paper-card');
+    if(!card||e.target.closest('a')) return;
+    e.preventDefault();e.stopImmediatePropagation();
+    var cards=Array.prototype.slice.call(document.querySelectorAll('.paper-card'));
+    var i=cards.indexOf(card);var k=keys[i]||keys[0];
+    var p=(typeof paperData!=='undefined')?paperData[k]:null;
+    if(p&&p.local&&window.openSimplePdf){window.openSimplePdf(p.local,p.title||k);}
   },true);
 })();
 </script>
